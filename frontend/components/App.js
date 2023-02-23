@@ -61,7 +61,11 @@ export default function App() {
         setArticles(res.data.articles);
         setMessage(res.data.message)
       })
-      .catch(err => console.error(err))
+      .catch(err => {console.error(err);
+        if (err.response.statusText === 'Unauthorized') {
+          redirectToLogin()
+        }
+      })
       .finally(setSpinnerOn(false))
     // On success, we should set the articles in their proper state and
     // put the server success message in its proper state.
@@ -82,10 +86,16 @@ export default function App() {
       .catch(err => console.error("postArticle catch block: ", err))
   }
 
-  const updateArticle = (payload) => {
+  const updateArticle = ({article_id, article }) => {
     // ✨ implement
-    axiosWithAuth().put(`/articles/${payload.article_id}`, payload)
-      .then(res => console.log(res))
+    axiosWithAuth().put(`/articles/${article_id}`, article)
+      .then(res => {console.log(res)
+        setMessage(res.data.message);
+
+        const idx = articles.indexOf(articles.find(art => art.article_id === article_id));
+        const newArticles = [...articles.slice(0,idx),res.data.article,...articles.slice(idx + 1)];
+        setArticles(newArticles)
+      })
       .catch(err => console.error('updateArticle catch: ', err))
   }
 
