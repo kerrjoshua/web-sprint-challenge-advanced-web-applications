@@ -83,20 +83,20 @@ export default function App() {
         setMessage(res.data.message)
 
       })
-      .catch(err => console.error("postArticle catch block: ", err))
+      .catch(err => setMessage(err.response.message))
   }
 
   const updateArticle = ({article_id, article }) => {
     // ✨ implement
     axiosWithAuth().put(`/articles/${article_id}`, article)
-      .then(res => {console.log(res)
+      .then(res => {
         setMessage(res.data.message);
 
         const idx = articles.indexOf(articles.find(art => art.article_id === article_id));
         const newArticles = [...articles.slice(0,idx),res.data.article,...articles.slice(idx + 1)];
         setArticles(newArticles)
       })
-      .catch(err => console.error('updateArticle catch: ', err))
+      .catch(err => setMessage(err.response.message))
   }
 
   const deleteArticle = article_id => {
